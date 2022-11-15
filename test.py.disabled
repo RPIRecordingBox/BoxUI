@@ -1,0 +1,118 @@
+import pyaudio
+import wave
+import numpy as np
+from threading import Thread
+
+CHUNK = 2048
+SIZE_TO_FLUSH = 16
+
+p = pyaudio.PyAudio()
+
+
+
+"""
+Threaded microphone for recording audio data
+"""
+class Microphone(Thread):
+    """
+    Construct a microphone instance
+    :param i: Index of microphone
+    :param sample_rate: Sample rate in hZ
+    :param channels: Channels to record as int > 0
+    """
+    def __init__(self, i, sample_rate, channels):
+        Thread.__init__(self)
+        self.i = i
+        self.sample_rate = int(sample_rate)
+        self.channels = channels
+        self.file_name = f"out{i}.wav"
+        self.frames = []
+        self.should_stop = False
+
+    """
+    Main loop
+    """
+    def run(self):
+        self.generate_stream()
+        self.generate_output_file()
+
+        while not self.should_stop:
+            data = self.stream.read(CHUNK, exception_on_overflow = False)
+            data = self.format_audio(data)
+            self.wf.writeframes(data)
+
+        self.stream.stop_stream()
+        self.stream.close()
+        self.wf.close()
+
+    """
+    Perform audio pre-formatting, such as
+    gain adjustment. noise filtering, etc...
+    """
+    def format_audio(self, chunk):
+        data = decode(chunk, 2)
+        return encode(data)
+
+    """
+    Generate audio input stream
+    """
+    def generate_stream(self):
+        self.stream = p.open(format=pyaudio.paInt16,
+                channels=self.channels,
+                rate=self.sample_rate,
+                input=True,
+                frames_per_buffer=CHUNK,
+                input_device_index=self.i)
+
+    """
+    Create an output file to write to
+    """
+    def generate_output_file(self):
+        wf = wave.open(self.file_name, 'wb')
+        wf.setnchannels(self.channels)
+        wf.setsampwidth(p.get_sample_size(pyaudio.paInt16))
+        wf.setframerate(self.sample_rate)
+        self.wf = wf
+
+    """
+    Stop recording and write to file
+    """
+    def stop_record(self):
+        self.should_stop = True
+        
+
+# Autodetect microphones
+info = p.get_host_api_info_by_index(0)
+numdevices = info.get("deviceCount")
+
+# Iterate all devices and locate the microphones
+mics = []
+for i in range(0, numdevices):
+    device = p.get_device_info_by_host_api_device_index(0, i)
+    if (device.get("maxInputChannels")) > 0:
+        name = device.get("name")
+        print(name)
+        if "Avantree DG60" in name:
+            mics.append([i, device.get("defaultSampleRate"), device.get("maxInputChannels")])
+
+
+print(mics)
+mics = [Microphone(*x) for x in mics]
+
+frames = []
+CHUNK = 8192
+
+import sys
+
+mics[1].start()
+mics[0].start()
+
+import time
+time.sleep(15)
+mics[1].stop_record()
+mics[0].stop_record()
+
+print("Done")
+
+time.sleep(2)
+p.terminate()
