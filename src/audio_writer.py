@@ -2,10 +2,11 @@ import pyaudio
 import wave
 import numpy as np
 import noisereduce as nr
+from threading import Thread
 from os import path
 
-from config import CHUNK, GAIN, SECONDS
-import speech_rec
+from src.config import CHUNK, GAIN, SECONDS
+import src.speech_rec
 
 def decode(in_data, channels):
     """
@@ -67,14 +68,13 @@ class AudioWriter(object):
 
             if self.processed % C == C - 1:
                 fn = self.get_current_filename()
-
-                print("Many!!")
                 self.count += 1
                 self.wf.close()
 
-                speech_rec.rec(fn)
+                def r():
+                    speech_rec.rec(fn)
 
-                print("??")
+                Thread(target=r, daemon=True).start()
                 self.generate_output_file()
 
             q.task_done()
@@ -100,7 +100,7 @@ class AudioWriter(object):
     Get the current filename based on count
     """
     def get_current_filename(self):
-        self.file_name.replace("[NUMBER]", str(self.count)),
+        return self.file_name.replace("[NUMBER]", str(self.count))
 
     """
     Create an output file to write to

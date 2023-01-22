@@ -1,0 +1,13 @@
+- Better interface
+- Script to download models beforehand
+- Neatify code
+- Auto updates
+- Use actual logger + intro terminal splash
+
+GUI:
+- storage warning
+- record icons!
+- Warn you can't record whjen recording
+- New palceholder
+
+d_electrical_compsduter__zxg05412

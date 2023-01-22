@@ -23,8 +23,8 @@ from threading import Thread
 from os import path
 import queue
 
-from audio_writer import AudioWriter
-from config import CHUNK
+from src.audio_writer import AudioWriter
+from src.config import CHUNK
 
 """
 Threaded microphone for recording audio data
@@ -35,17 +35,18 @@ class Microphone(Thread):
     :param i: Index of microphone
     :param sample_rate: Sample rate in hZ
     :param channels: Channels to record as int > 0
-    :param folder: Folder to save output in
+    :param folder: Folder to save output in, or None to not save
     """
     def __init__(self, i, sample_rate, channels, folder):
         Thread.__init__(self)
         self.i = i
         self.sample_rate = int(sample_rate)
         self.channels = channels
-        self.file_name = path.join(folder, f"out{i}.wav")
+        self.file_name = path.join(folder, f"out{i}.wav") if folder else None
         self.should_stop = False
         self.to_process = queue.Queue()
-        self.writer = AudioWriter(folder, self)
+        self.writer = AudioWriter(folder, self) if folder else None
+        self.moving_average = []
 
     """
     Main loop
@@ -58,18 +59,23 @@ class Microphone(Thread):
 
         while not self.should_stop:
             data = self.stream.read(CHUNK, exception_on_overflow = False)
-            self.wf.writeframes(data)
-            self.to_process.put(data)
+            if self.writer != None: # Write to file
+                self.wf.writeframes(data)
+                self.to_process.put(data)
+            else: # log moving average
+                self.moving_average = [data]
 
-            if not started:
+            if not started and self.writer != None:
                 Thread(target=self.writer.run, daemon=True).start()
                 started = True
 
-        self.to_process.join()
-        self.writer.on_done()
+        if self.writer != None:
+            self.to_process.join()
+            self.writer.on_done()
+            self.wf.close()
+
         self.stream.stop_stream()
         self.stream.close()
-        self.wf.close()
         self.p.terminate()
             
     """
@@ -88,6 +94,10 @@ class Microphone(Thread):
     Create an output file to write to
     """
     def generate_output_file(self):
+        if self.file_name == None:
+            self.wf = None
+            return
+
         wf = wave.open(self.file_name, 'wb')
         wf.setnchannels(self.channels)
         wf.setsampwidth(p.get_sample_size(pyaudio.paInt16))

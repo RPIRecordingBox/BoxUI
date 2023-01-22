@@ -36,6 +36,7 @@ class Cameras(Thread):
         self.sources = sources
         self.path = outpath
         self.should_stop = False
+        self.images = []
 
     """
     Main loop
@@ -46,8 +47,10 @@ class Cameras(Thread):
         fourcc = cv2.VideoWriter_fourcc('M','J','P','G')
 
         # OpenCV enforces some weird naming scheme so the 1 and 2 before .avi are needed
-        out1 = cv2.VideoWriter(path.join(self.path, 'output1.avi'), fourcc, 20.0, (W, H))
-        out2 = cv2.VideoWriter(path.join(self.path, 'output2.avi'), fourcc, 20.0, (W, H))
+        out1, out2 = None, None
+        if self.path:
+            out1 = cv2.VideoWriter(path.join(self.path, 'output1.avi'), fourcc, 20.0, (W, H))
+            out2 = cv2.VideoWriter(path.join(self.path, 'output2.avi'), fourcc, 20.0, (W, H))
         stream1 = VideoGear(source=self.sources[0], logging=True, **options).start() 
         stream2 = VideoGear(source=self.sources[1], logging=True, **options).start() 
 
@@ -65,12 +68,16 @@ class Cameras(Thread):
                 for detection in results.detections:
                     mp_drawing.draw_detection(image, detection)
 
-            out.write(image.astype('uint8'))
+            if self.path:
+                out.write(image.astype('uint8'))
+            else:
+                self.images.append(image)
 
         with mp_face_detection.FaceDetection(
             model_selection=0, min_detection_confidence=0.5) as face_detection:
 
             while True:
+                self.images = self.images[-2:]
                 frameA = stream1.read()
                 frameB = stream2.read()
 
@@ -80,8 +87,9 @@ class Cameras(Thread):
                 parse_image(frameA, out1)
                 parse_image(frameB, out2)
 
-        out1.release()
-        out2.release()
+        if self.path:
+            out1.release()
+            out2.release()
         cv2.destroyAllWindows()
         stream1.stop()
         stream2.stop()

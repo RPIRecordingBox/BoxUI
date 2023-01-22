@@ -1,0 +1,179 @@
+/*
+Based on
+Material Dark Style Sheet for QT Applications
+Author: Jaime A. Quiroga P.
+Inspired on https://github.com/jxfwinter/qt-material-stylesheet
+Company: GTRONICK
+Last updated: 04/12/2018, 15:00.
+Available at: https://github.com/GTRONICK/QSS/blob/master/MaterialDark.qss
+*/
+
+
+
+QMainWindow {
+	background-color:#263238; /* Hack for tabs */
+}
+QDialog {
+	background-color:#f2f2f2;
+}
+QColorDialog {
+	background-color:#f2f2f2;
+}
+QTextEdit {
+	background-color:#f2f2f2;
+	color: #2b2b2b;
+}
+QPlainTextEdit {
+	selection-background-color:#007b50;
+	background-color:#f2f2f2;
+	border-style: solid;
+	border-top-color: transparent;
+	border-right-color: transparent;
+	border-left-color: transparent;
+	border-bottom-color: transparent;
+	border-width: 1px;
+	color: #2b2b2b;
+}
+QPushButton{
+	border-style: solid;
+	border-color: transparent;
+	border-width: 2px;
+	color: #eee;
+	padding: 2px;
+	background-color: #263238;
+	font-size: 18px;
+	border-radius: 4px;
+}
+QPushButton::default{
+	border-style: inset;
+	border-color: #04b97f;
+	border-width: 1px;
+	color: #444444;
+	padding: 2px;
+	background-color: #f2f2f2;
+}
+QPushButton:hover{
+	border-style: solid;
+	border-color: #37efba;
+	border-width: 1px;
+	border-style: solid;
+	color: #444444;
+	padding-bottom: 2px;
+	background-color: #ffffff;
+}
+QPushButton:pressed{
+	border-style: solid;
+	border-color: #37efba;
+	border-width: 1px;
+	color: #37efba;
+	padding-bottom: 1px;
+	background-color: #ffffff;
+}
+QPushButton:disabled{
+	border-style: solid;
+	border-color: #808086;
+	border-width: 2px;
+	border-style: solid;
+	color: #808086;
+	padding-bottom: 1px;
+	background-color: #f2f2f2;
+}
+
+/* List of files */
+QListWidget {
+	font-size: 18px;
+}
+
+QListWidget::item {
+	border-bottom: 1px solid #ccc;
+	padding: 10px 0;
+}
+QListWidget::item:selected {
+	background-color: #f7f7f7;
+	color: #333;
+}
+
+QLabel {
+	color: #2b2b2b;
+	font-size: 18px;
+}
+
+QProgressBar {
+	text-align: center;
+	color: rgb(240, 240, 240);
+    min-height: 4px;
+    max-height: 4px;
+	padding: 0px;
+	background-color:#f2f2f2;
+}
+QProgressBar::chunk {
+	background-color: #04b97f;
+	border-radius: 5px;
+}
+
+/* Recording labels */
+#timeLabel {
+	font-size: 72px;
+}
+
+#fileLabel {
+	font-size: 21px;
+}
+
+#storageLabel {
+	font-size: 21px;
+}
+
+
+/* Recording buttons */
+#startBtn {
+	background-color: #4caf50;
+	border-bottom: 4px solid #1f472b;
+	color: white;
+}
+
+#startBtn:disabled {
+	color: #999;
+	background-color:rgba(76, 175, 80, 0.5);
+	border: 1px solid #1f472b;
+	border-top: 2px solid #1f472b;
+}
+
+#stopBtn {
+	background-color: #f44336;
+	border-bottom: 4px solid #552200;
+	color: white;
+}
+
+#stopBtn:disabled {
+	color: #999;
+	background-color:rgba(244, 67, 54, 0.5);
+	border: 1px solid #552200;
+	border-top: 2px solid #1f472b;
+}
+
+/* Style the vertical tabs */
+QTabWidget::pane {
+	top: -1px;
+}
+
+QTabBar::tab {
+	background-color: #222;
+	border: 1px solid #444; 
+	padding: 0px 30px;
+	text-align: left;
+	
+	color: #ddd;
+	font-size: 18px;
+
+	/* Width and height are swapped for vertical tabs */
+	height: 150px;
+} 
+
+QTabBar::tab:selected { 
+	background: #455a64;
+	border-left-color: white;
+	border-left-width: 5px;
+	color: white;
+	margin-bottom: -1px; 
+}

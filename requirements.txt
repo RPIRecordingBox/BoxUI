@@ -3,3 +3,4 @@ PyQt5
 wave
 opencv-python==4.1.2.30
 git+https://github.com/openai/whisper.git
+pyqt_vertical_tab_widget
