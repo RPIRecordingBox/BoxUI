@@ -13,3 +13,10 @@ Then
 ```
 pip install -r requirements.txt
 ```
+
+Autorun on boot:
+
+```
+sudo crontab -e
+@reboot cd /home/box1/opencv-camera-test/recording-demo/ && python3 main.py
+```

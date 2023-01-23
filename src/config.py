@@ -1,9 +1,15 @@
 INFO_TEXT = """
-Box v{version}
+<h3>Box v{version}</h3><br>
 
-By: <Insert names here>
+<b>By:</b> [Insert names here]<br>
+<b>Support:</b> [Insert emails here]<br>
+<b>Github:</b>  <span style="color: #0044AA">https://github.com/RPIRecordingBox/BoxUI</span><br><br>
 
-Support links: <Insert emails and githubs here>
+<b>Last check for update:</b> {lastUpdated}<br><br>
+
+{update}<br><br>
+
+<span style="color: #444">(Note: updating will restart the program,<br>recordings in progress may be lost)</span><br>
 """
 
 # Chunk size to read from stream in # of bytes

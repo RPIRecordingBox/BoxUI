@@ -1,0 +1,7 @@
+# These version numbers are independent of each other
+stable=1.0.0
+dev=1.0.0
+
+# Version 1.0.0 audio libraries
+ver1.0.0=apt-get install libasound-dev portaudio19-dev libportaudio2 libportaudiocpp0 -y
+ver1.0.0=chmod +x restart.sh

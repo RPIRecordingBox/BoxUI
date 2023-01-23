@@ -36,7 +36,7 @@ class Controller(object):
         self.tabs.addTab(self.views[1], "Files    ")
         self.tabs.addTab(self.views[2], "Mic Test ")
         self.tabs.addTab(self.views[3], "Cam Test")
-        self.tabs.addTab(self.views[4], "Info     ")
+        self.tabs.addTab(self.views[4], "Info / Update")
 
         self.views[0].on_open()
         self.tabs.currentChanged.connect(self.switch)
