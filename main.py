@@ -63,6 +63,7 @@ if __name__ == "__main__":
 
     c = Controller()
     window.setCentralWidget(c.tabs)
-    # window.show()
-    window.showFullScreen()
+    
+    # info view, only show fullscreen if not in dev branch
+    window.show() if c.views[4].is_dev else window.showFullScreen()
     app.exec()

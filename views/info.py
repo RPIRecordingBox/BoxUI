@@ -153,11 +153,16 @@ class InfoView(GenericView):
         # Store original file state
         req, ver = self.parseRequirements()
 
-        p = subprocess.Popen(["git", "pull", "origin", self.branch], stdout=subprocess.PIPE)
-        p = p.communicate()[0]
+        p = subprocess.Popen(["git", "pull", "origin", self.branch], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        p = p.communicate()
+        p = p[0] or p[1]
         updated = False
 
-        if not "Already up to date" in str(p):
+        if "Could not resolve host" in str(p):
+            self.rewriteLabel(updateText="<span style=\"color: #AA0000\">Could not connect to github, check internet connection</span>")
+            self.update_btn.setDisabled(False)
+            return
+        elif not "Already up to date" in str(p):
             # New files, perform update!
             self.rewriteLabel(updateText="<span style=\"color: #AA4400\">Update found, installing...</span>")
 
