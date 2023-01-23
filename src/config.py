@@ -9,7 +9,9 @@ INFO_TEXT = """
 
 {update}<br><br>
 
-<span style="color: #444">(Note: updating will restart the program,<br>recordings in progress may be lost)</span><br>
+<span style="color: #444">(Note: updating will restart the program,<br>recordings in progress may be lost)</span><br><br>
+
+{root}
 """
 
 # Chunk size to read from stream in # of bytes

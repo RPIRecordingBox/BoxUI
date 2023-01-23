@@ -45,6 +45,7 @@ class InfoView(GenericView):
         self.update_text = ""
         self.is_dev = False
         self.branch = "master"
+        self.root = ""
 
         self.readUpdateData()
         self.rewriteLabel()
@@ -89,6 +90,10 @@ class InfoView(GenericView):
             d[key] = value
         self.version = d["dev"] if self.is_dev else d["stable"]
 
+        # Check if root
+        if not 'SUDO_UID' in os.environ.keys():
+            self.root = "<span style=\"color: #FF0000\">No root access, contact support (probably misconfigured)</span>"
+
 
     def writeUpdateData(self):
         """
@@ -102,7 +107,7 @@ class InfoView(GenericView):
             f.write("\n".join([str(x).strip() for x in s]))
 
 
-    def rewriteLabel(self, updateText="", version=""):
+    def rewriteLabel(self, updateText="", version="", root=""):
         """
         Update all label text
         :param updateText: Update indicator for user, will use saved if "", and will save
@@ -112,11 +117,13 @@ class InfoView(GenericView):
         if self.is_dev:
             version += " [dev]"
         updateText = updateText or self.update_text
+        root = root or self.root
 
         text = INFO_TEXT \
             .replace("{version}", version) \
             .replace("{lastUpdated}", self.last_updated) \
-            .replace("{update}", updateText)
+            .replace("{update}", updateText) \
+            .replace("{root}", root)
 
         self.label.setText(text)
         QApplication.processEvents() # Force label update
@@ -165,9 +172,6 @@ class InfoView(GenericView):
                 try:
                     if version.parse(ver) > version.parse(self.version):
                         # Attempt to execute new scripts
-                        if not 'SUDO_UID' in os.environ.keys():
-                            self.rewriteLabel(updateText="<span style=\"color: #FF0000\">Program does not have root access, may not be setup correctly.<br>Update scripts may fail, trying anyways...</span>")
-
                         cmd = line.split("=", 1)[1].strip().split(" ")
                         p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
                         p = p.communicate()[0]

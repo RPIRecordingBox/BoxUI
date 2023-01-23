@@ -14,9 +14,11 @@ Then
 pip install -r requirements.txt
 ```
 
-Autorun on boot:
+
+## Auto restart on boot:
+
+Due to Qt dark magic systemctl is having issues, easiest way is root crontab, do `sudo crontab -e` then add
 
 ```
-sudo crontab -e
-@reboot cd /home/box1/opencv-camera-test/recording-demo/ && python3 main.py
+@reboot sleep 20; cd /home/box1/opencv-camera-test/recording-demo/ && ./launch.sh
 ```

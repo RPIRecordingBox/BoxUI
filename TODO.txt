@@ -10,4 +10,6 @@ GUI:
 - Warn you can't record whjen recording
 - New palceholder
 
+Store current version as well - compare and run update
+
 d_electrical_compsduter__zxg05412

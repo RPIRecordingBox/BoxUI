@@ -63,6 +63,6 @@ if __name__ == "__main__":
 
     c = Controller()
     window.setCentralWidget(c.tabs)
-    window.show()
-    # window.showFullScreen()
+    # window.show()
+    window.showFullScreen()
     app.exec()
