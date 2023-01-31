@@ -9,3 +9,4 @@ noisereduce==2.0.1
 vidgear==0.2.6
 mediapipe==0.9.0.1
 packaging
+requests

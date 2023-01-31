@@ -10,4 +10,4 @@ GUI:
 - Warn you can't record whjen recording
 - New palceholder
 
-d_electrical_compsduter__zxg05412
+Write outs each time?
