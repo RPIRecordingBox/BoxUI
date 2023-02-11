@@ -66,7 +66,8 @@ class Cameras(Thread):
             image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
             if results.detections:
                 for detection in results.detections:
-                    mp_drawing.draw_detection(image, detection)
+                    pass
+                    # mp_drawing.draw_detection(image, detection)
 
             if self.path:
                 out.write(image.astype('uint8'))

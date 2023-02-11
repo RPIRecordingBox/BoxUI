@@ -1,5 +1,6 @@
 from PyQt5.QtWidgets import QHBoxLayout, QWidget, QLabel, QPushButton, QListWidget, QVBoxLayout, QProgressBar
 import os
+from datetime import datetime
 
 from src.config import RECORD_DIR
 from src.generic_view import GenericView
@@ -52,6 +53,41 @@ class LogView(GenericView):
 
         # Load files
         self.listWidget.clear()
-        for dir in [x[0] for x in os.walk(RECORD_DIR)][1:]:
+
+        # Sort by filename (date wise)
+        files = [x[0] for x in os.walk(RECORD_DIR)][1:]
+        files.sort(key = lambda row: datetime.strptime(row.split(" ")[0].split("/")[-1], '%d-%m-%Y'), reverse=True)
+
+    
+        for dir in files:
             dname = dir.split("/")[-1]
-            self.listWidget.addItem(f"{dname}  - {round(size(dir)  / 1e6, 2)} MB")
+
+            dir_size = size(dir)
+            is_gb = dir_size > 1e9
+            size1 = dir_size / 1e9 if is_gb else dir_size / 1e6
+            size2 = "GB" if is_gb else "MB"
+
+            def format_file_name(name: str) -> str:
+                """
+                Format name as better time
+                :param name: DD-MM-YYYY HH MM SS
+                :return: YYYY/MM/DD HH:MM:SS [AM|PM]
+                """
+                name = name.split(" ", 1)
+                year = [int(x) for x in name[0].split("-")]
+                time = [int(x) for x in name[1].split(" ")]
+                time_of_day = "AM"
+
+                if time[0] > 12:
+                    time_of_day = "PM"
+                    time[0] -= 12
+
+                # Add leading zeros
+                year = [str(x).zfill(2) for x in year]
+                time = [str(x).zfill(2) for x in time]
+                year = "/".join(year[::-1])
+                time = ":".join(time)
+
+                return f"{year} {time} {time_of_day}"
+
+            self.listWidget.addItem(f".../{dname}       {format_file_name(dname)}        {round(size1, 2)} {size2}")
