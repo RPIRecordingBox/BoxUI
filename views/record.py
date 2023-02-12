@@ -98,6 +98,8 @@ class RecordView(GenericView):
         if time.time() - self.time_since_last_end < 2:
             return
 
+        # Note: if you change this string you will need to rewrite all the code
+        # in log.py that assumes the format of this string
         now = datetime.datetime.now()
         dt_string = now.strftime("%d-%m-%Y %H %M %S")
 

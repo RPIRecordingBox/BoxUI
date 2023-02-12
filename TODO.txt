@@ -11,3 +11,8 @@ GUI:
 - New palceholder
 
 Write outs each time?
+
+placeholder update image
+
+gnome-control-center
+- wifi

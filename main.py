@@ -11,6 +11,7 @@ from views.info import InfoView
 from views.log import LogView
 from views.video_test import VideoTestView
 from views.mic_test import MicTestView
+from views.config import ConfigView
 
 """
 Controls view switching
@@ -26,7 +27,8 @@ class Controller(object):
             LogView(self),
             MicTestView(self),
             VideoTestView(self),
-            InfoView(self)
+            InfoView(self),
+            ConfigView(self)
         ]
 
         # Spaces are necessary to fake left alignment (as text-align doesn't
@@ -37,6 +39,7 @@ class Controller(object):
         self.tabs.addTab(self.views[2], "Mic Test ")
         self.tabs.addTab(self.views[3], "Cam Test")
         self.tabs.addTab(self.views[4], "Info / Update")
+        self.tabs.addTab(self.views[5], "Config")
 
         self.views[0].on_open()
         self.tabs.currentChanged.connect(self.switch)

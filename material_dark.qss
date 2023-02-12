@@ -89,7 +89,7 @@ QListWidget::item {
 	padding: 10px 0;
 }
 QListWidget::item:selected {
-	background-color: #f7f7f7;
+	background-color: #c4e3ff;
 	color: #333;
 }
 
@@ -160,7 +160,7 @@ QTabWidget::pane {
 QTabBar::tab {
 	background-color: #222;
 	border: 1px solid #444; 
-	padding: 0px 30px;
+	padding: 0px 20px;
 	text-align: left;
 	
 	color: #ddd;
@@ -174,4 +174,15 @@ QTabBar::tab:selected {
 	background: #455a64;
 	color: white;
 	margin-bottom: -1px;
+}
+
+/* Delete file btn */
+#delBtn {
+	background-color: #f53d3d;
+	color: white;
+}
+
+#delBtn:disabled {
+	background-color: #ff8d85;
+	color: #eee;
 }
