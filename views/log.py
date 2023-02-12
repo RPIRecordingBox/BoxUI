@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QApplication, QLabel, QPushButton, QListWidget, QVBoxLayout, QProgressBar, QAbstractItemView, QHBoxLayout
+from PyQt5.QtWidgets import QApplication, QLabel, QPushButton, QListWidget, QVBoxLayout, QProgressBar, QAbstractItemView, QHBoxLayout, QMessageBox
 from PyQt5.QtCore import Qt, QTimer
 
 import os, shutil
@@ -111,7 +111,7 @@ class LogView(GenericView):
         Update progress label when copying a file
         Only to be performed in a background timer
         """
-        if not self.is_copying:
+        if not self.is_copying or not self.to_copy:
             return
 
         total = self.copy_total
@@ -132,6 +132,7 @@ class LogView(GenericView):
         self.is_copying = False
         self.copy_to_sd_btn.setText(COPY_BTN_TEXT)
         self.copy_total = LARGE_COPY_TOTAL
+        self.del_btn.setDisabled(False)
     
 
     def copy_to_sd(self):
@@ -159,6 +160,7 @@ class LogView(GenericView):
 
         sel = self.get_selected()
         self.to_copy = [dir, sel]
+        self.del_btn.setDisabled(True)
         self.label.setText(f"<span style='color: #777'>Copying {len(sel)} folder(s)..., may take a while, do not remove SD card...</span>")
         QApplication.processEvents() # Force label update
 
@@ -203,6 +205,43 @@ class LogView(GenericView):
         """
         Deleted selected files
         """
+        sel = self.get_selected()
+
+        # Confirm delete check
+        confirm = QMessageBox.warning(self, "title", f"Are you sure you want to delete {len(sel)} recording(s)?",
+            buttons = QMessageBox.Yes | QMessageBox.No,
+            defaultButton = QMessageBox.No)
+        if confirm != QMessageBox.Yes:
+            return
+
+        self.label.setText(f"<span style='color: #777'>Deleting {len(sel)} folder(s)..., may take a while, do not power off device...</span>")
+        QApplication.processEvents() # Force label update
+
+        def perform_delete():
+            for p in sel:
+                try:
+                    if os.path.exists(p):
+                        shutil.rmtree(p)
+                    if self.kill_copy:
+                        self.stop_copy_cleanup()
+                        return
+                except OSError as exc:
+                    self.stop_copy_cleanup()
+                    self.label.setText(f"<span style='color: #aa0000'>OSError during deletion: '{exc}'</span>")
+                    return
+
+            self.label.setText(f"<span style='color: #00aa00'>Deleted {len(sel)} folder(s)!</span>")
+            self.copy_to_sd_btn.setDisabled(False)
+            self.stop_copy_cleanup()
+            
+            # Reload file list
+            self.on_open()
+
+        self.copy_to_sd_btn.setDisabled(True)
+        self.del_btn.setDisabled(True)
+        self.is_copying = True
+        self.copy_thread = Thread(target = perform_delete)
+        self.copy_thread.start()
 
 
     def get_selected(self):
@@ -221,7 +260,7 @@ class LogView(GenericView):
         disable = len(self.listWidget.selectedItems()) == 0
         if not self.is_copying:
             self.copy_to_sd_btn.setDisabled(disable)
-        self.del_btn.setDisabled(disable)
+            self.del_btn.setDisabled(disable)
 
 
     def on_open(self):
