@@ -122,5 +122,5 @@ for i in range(0, numdevices):
     device = p.get_device_info_by_host_api_device_index(0, i)
     if (device.get("maxInputChannels")) > 0:
         name = device.get("name")
-        if "Avantree DG60" in name:
+        if "Avantree DG60" in name or "relacart" in name.lower():
             mics.append([i, device.get("defaultSampleRate"), device.get("maxInputChannels")])
