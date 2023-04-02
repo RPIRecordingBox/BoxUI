@@ -57,7 +57,6 @@ class VideoTestView(GenericView):
         self.cameras.start()
 
     def update_beats(self):
-        # Doesn't work because of thread syncing
         while self.open:
             time.sleep(0.1)
             for i, image in enumerate(self.cameras.images):

@@ -24,7 +24,7 @@ from os import path
 import queue
 
 from src.audio_writer import AudioWriter
-from src.config import CHUNK
+from src.config import CHUNK, MIC_TEMP_FOLDER
 
 """
 Threaded microphone for recording audio data
@@ -39,14 +39,18 @@ class Microphone(Thread):
     """
     def __init__(self, i, sample_rate, channels, folder):
         Thread.__init__(self)
+
+        self.is_temp = folder is None
+        if folder is None:
+            folder = MIC_TEMP_FOLDER
+
         self.i = i
         self.sample_rate = int(sample_rate)
         self.channels = channels
         self.file_name = path.join(folder, f"out{i}.wav") if folder else None
         self.should_stop = False
         self.to_process = queue.Queue()
-        self.writer = AudioWriter(folder, self) if folder else None
-        self.moving_average = []
+        self.writer = AudioWriter(folder, self, self.is_temp) if folder else None
 
     """
     Main loop
@@ -59,20 +63,19 @@ class Microphone(Thread):
 
         while not self.should_stop:
             data = self.stream.read(CHUNK, exception_on_overflow = False)
-            if self.writer != None: # Write to file
+            if not self.is_temp: # Write to file
                 self.wf.writeframes(data)
-                self.to_process.put(data)
-            else: # log moving average
-                self.moving_average = [data]
+            
+            self.to_process.put(data)
 
             if not started and self.writer != None:
                 Thread(target=self.writer.run, daemon=True).start()
                 started = True
 
-        if self.writer != None:
-            self.to_process.join()
-            self.writer.on_done()
+        if not self.is_temp:
             self.wf.close()
+        self.to_process.join()
+        self.writer.on_done()
 
         self.stream.stop_stream()
         self.stream.close()
@@ -94,7 +97,7 @@ class Microphone(Thread):
     Create an output file to write to
     """
     def generate_output_file(self):
-        if self.file_name == None:
+        if self.is_temp:
             self.wf = None
             return
 
@@ -109,7 +112,7 @@ class Microphone(Thread):
     """
     def stop_record(self):
         self.should_stop = True
-        
+
 
 # Autodetect microphones
 p = pyaudio.PyAudio()

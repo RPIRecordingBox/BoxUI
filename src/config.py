@@ -41,3 +41,6 @@ CLICKS_TO_REVERT = 5
 
 # Time for revert confirmation (s) before time out confirmation
 TIME_TO_REVERT = 7
+
+# Temp folder for mic data recording
+MIC_TEMP_FOLDER = "temp/"

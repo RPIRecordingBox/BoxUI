@@ -6,7 +6,7 @@ from threading import Thread
 from os import path
 
 from src.config import CHUNK, GAIN, SECONDS
-import src.speech_rec
+
 
 def decode(in_data, channels):
     """
@@ -43,14 +43,16 @@ class AudioWriter(object):
     :param channels: Channels to record as int > 0
     :param folder: Folder to save output in
     :param microphone: Microphone object
+    :param is_temp: Is temp file? Will overwrite and won't generate snippets if true
     """
-    def __init__(self, folder, microphone):
+    def __init__(self, folder, microphone, is_temp=False):
         self.sample_rate = microphone.sample_rate
         self.channels = microphone.channels
         self.file_name = path.join(folder, f"snippet-{microphone.i}-[NUMBER].wav")
         self.processed = 0
         self.count = 0
         self.mic = microphone
+        self.is_temp = is_temp
 
     """
     Main loop
@@ -67,14 +69,12 @@ class AudioWriter(object):
             self.processed += 1
 
             if self.processed % C == C - 1:
-                fn = self.get_current_filename()
-                self.count += 1
+                if not self.is_temp:
+                    self.count += 1
+                else:
+                    with q.mutex:
+                        q.queue.clear()
                 self.wf.close()
-
-                def r():
-                    speech_rec.rec(fn)
-
-                Thread(target=r, daemon=True).start()
                 self.generate_output_file()
 
             q.task_done()

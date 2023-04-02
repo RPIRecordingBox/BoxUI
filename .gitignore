@@ -1,5 +1,6 @@
 __pycache__
 *.pyc
 recordings
+temp
 update.txt
 out.txt
