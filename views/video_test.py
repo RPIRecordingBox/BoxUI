@@ -23,14 +23,14 @@ class VideoTestView(GenericView):
         
         layout = QHBoxLayout()
 
-        im = QPixmap("./image.jpg")
+        im = QPixmap("./thumbnail_placeholder.jpg")
         label = QLabel("??")
         label.setPixmap(im)
         label.setFixedSize(IMAGE_WIDTH, IMAGE_HEIGHT)
         layout.addWidget(label)
         self.image_labels.append(label)
 
-        self.im = QPixmap("./image.jpg")
+        self.im = QPixmap("./thumbnail_placeholder.jpg")
         label = QLabel("??")
         label.setPixmap(self.im)
         label.setFixedSize(IMAGE_WIDTH, IMAGE_HEIGHT)

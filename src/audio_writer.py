@@ -83,7 +83,7 @@ class AudioWriter(object):
     Remember to call this when done!
     """
     def on_done(self):
-        print(self.processed, flush=True)
+        # print(self.processed, flush=True)
         self.wf.close()
             
     """

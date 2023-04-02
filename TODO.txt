@@ -7,7 +7,3 @@ GUI:
 - record icons!
 - Warn you can't record whjen recording
 
-Write outs each time?
-
-placeholder update image
-

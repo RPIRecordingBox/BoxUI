@@ -234,7 +234,6 @@ class InfoView(GenericView):
         p = subprocess.Popen(["echo", "'hello'"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         p = p.communicate()
         p = p[0] or p[1]
-        print(p)
         
         self.updateInPlace(req)
         self.rewriteLabel(updateText="<span style=\"color: #00AA00\">Revert complete, program will restart in 10s</span>")
