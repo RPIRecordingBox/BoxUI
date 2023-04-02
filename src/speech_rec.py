@@ -1,7 +1,7 @@
+"""
 import whisper
 import time
 
-"""
 print("Loading speech rec model...")
 model = whisper.load_model("base")
 
