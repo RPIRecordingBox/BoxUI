@@ -21,6 +21,13 @@ class VideoTestView(GenericView):
         self.open = False
         self.image_labels = []
         
+        layout_main = QVBoxLayout()
+
+        self.error_label = QLabel("")
+        self.error_label.setStyleSheet("color: red;")
+        layout_main.addWidget(self.error_label)
+        layout_main.addStretch()
+
         layout = QHBoxLayout()
 
         im = QPixmap("./thumbnail_placeholder.jpg")
@@ -38,11 +45,15 @@ class VideoTestView(GenericView):
         layout.insertStretch(-1, 1)
         self.image_labels.append(label)
 
-        self.setLayout(layout)
+        layout_main.addLayout(layout)
+        layout_main.addStretch()
+        self.setLayout(layout_main)
     
     def on_open(self):
         if self.controller.views[0].is_recording:
-            return # TODO notify can't record when recording
+            self.error_label.setText("Cannot test cameras when currently recording")
+        else:
+            self.error_label.setText("")
 
         self.perform_recording()
         self.open = True
@@ -58,6 +69,9 @@ class VideoTestView(GenericView):
 
     def update_beats(self):
         while self.open:
+            if self.cameras.error:
+                self.error_label.setText(self.cameras.error)
+
             time.sleep(0.1)
             for i, image in enumerate(self.cameras.images):
                 if i >= 2: break

@@ -71,18 +71,15 @@ class MicTestView(GenericView):
         layout = QVBoxLayout()
 
         def make_mic_line(index):
-            layout = QHBoxLayout()
-
             mic_label = QLabel(f"Mic {index + 1}:")
             mic_label.setMaximumSize(70, 100)
             mic_label.setStyleSheet("font-weight: bold;")
-
-            layout.addWidget(mic_label)
-            layout.addWidget(QLabel("Read out text"))
+            return mic_label
         
-            widget = QWidget()
-            widget.setLayout(layout)
-            return widget
+        self.error_label = QLabel("")
+        self.error_label.setStyleSheet("color: red;")
+        layout.addWidget(self.error_label)
+        layout.addStretch()
 
         for i in range(4):
             layout.addWidget(make_mic_line(i))
@@ -97,6 +94,16 @@ class MicTestView(GenericView):
         self.setLayout(layout)
     
     def on_open(self):
+        # Check microphones exist
+        if len(mics) < 2:
+            c = len(mics) * 2
+            self.error_label.setText(f"Only {c} microphones detected, check connections or contact support")
+        elif self.controller.views[0].is_recording:
+            self.error_label.setText("Cannot test mics when currently recording")
+        else:
+            self.error_label.setText("")
+
+        # Create temp folder if necessary
         Path(MIC_TEMP_FOLDER).mkdir(parents=True, exist_ok=True)
 
         self.perform_recording()

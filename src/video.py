@@ -37,6 +37,7 @@ class Cameras(Thread):
         self.path = outpath
         self.should_stop = False
         self.images = []
+        self.error = ""
 
     """
     Main loop
@@ -51,8 +52,18 @@ class Cameras(Thread):
         if self.path:
             out1 = cv2.VideoWriter(path.join(self.path, 'output1.avi'), fourcc, 20.0, (W, H))
             out2 = cv2.VideoWriter(path.join(self.path, 'output2.avi'), fourcc, 20.0, (W, H))
-        stream1 = VideoGear(source=self.sources[0], logging=True, **options).start() 
-        stream2 = VideoGear(source=self.sources[1], logging=True, **options).start() 
+        
+        try:
+            stream1 = VideoGear(source=self.sources[0], logging=True, **options).start() 
+            stream2 = VideoGear(source=self.sources[1], logging=True, **options).start() 
+        except RuntimeError:
+            # Failed to init cameras
+            if self.path:
+                out1.release()
+                out2.release()
+            cv2.destroyAllWindows()
+            self.error = "Failed to init camera (check connection or contact support)"
+            return
 
         def parse_image(image, out):
             # To improve performance, optionally mark the image as not writeable to
