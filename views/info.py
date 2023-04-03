@@ -252,6 +252,9 @@ class InfoView(GenericView):
         req, ver = self.parseRequirements()
         self.last_commit_hash = str(subprocess.check_output(["git", "rev-parse", "--short", "HEAD"]), "utf-8").strip()
 
+        p = subprocess.Popen(["git", "stash"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        p = p.communicate()
+
         p = subprocess.Popen(["git", "pull", "origin", self.branch], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         p = p.communicate()
         p = p[0] or p[1]
@@ -277,6 +280,9 @@ class InfoView(GenericView):
             updated = True
         else:
             self.rewriteLabel(updateText="<span style=\"color: #00AA00\">Software up to date!</span>")
+
+        p = subprocess.Popen(["git", "stash", "pop"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        p = p.communicate()
 
         self.last_updated = str(datetime.datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
         self.writeUpdateData()
