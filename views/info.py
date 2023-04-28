@@ -230,8 +230,7 @@ class InfoView(GenericView):
         # Store original file state
         req, ver = self.parseRequirements()
 
-        # This is placeholder, command should be git reset --hard [self.last_commit_hash]
-        p = subprocess.Popen(["echo", "'hello'"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        p = subprocess.Popen(["git", "reset", "--hard", self.last_commit_hash], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         p = p.communicate()
         p = p[0] or p[1]
         
