@@ -19,8 +19,9 @@ from os import path
 mp_face_detection = mp.solutions.face_detection
 mp_drawing = mp.solutions.drawing_utils
 
-W = 720
-H = 480
+W = 1920
+H = 1080
+FPS = 5
 
 """
 Threaded camera recorder
@@ -43,15 +44,15 @@ class Cameras(Thread):
     Main loop
     """
     def run(self):
-        options = {"CAP_PROP_FRAME_WIDTH": W, "CAP_PROP_FRAME_HEIGHT": H, "CAP_PROP_FPS": 30}
+        options = {"CAP_PROP_FRAME_WIDTH": W, "CAP_PROP_FRAME_HEIGHT": H, "CAP_PROP_FPS": FPS}
 
         fourcc = cv2.VideoWriter_fourcc('M','J','P','G')
 
         # OpenCV enforces some weird naming scheme so the 1 and 2 before .avi are needed
         out1, out2 = None, None
         if self.path:
-            out1 = cv2.VideoWriter(path.join(self.path, 'output1.avi'), fourcc, 20.0, (W, H))
-            out2 = cv2.VideoWriter(path.join(self.path, 'output2.avi'), fourcc, 20.0, (W, H))
+            out1 = cv2.VideoWriter(path.join(self.path, 'output1.avi'), fourcc, FPS, (W, H))
+            out2 = cv2.VideoWriter(path.join(self.path, 'output2.avi'), fourcc, FPS, (W, H))
         
         try:
             stream1 = VideoGear(source=self.sources[0], logging=True, **options).start() 
