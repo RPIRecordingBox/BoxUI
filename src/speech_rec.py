@@ -1,5 +1,8 @@
 """
 import whisper
+=======
+# import whisper
+>>>>>>> Stashed changes
 import time
 
 print("Loading speech rec model...")

@@ -72,7 +72,7 @@ class MicTestView(GenericView):
 
         def make_mic_line(index):
             mic_label = QLabel(f"Mic {index + 1}:")
-            mic_label.setMaximumSize(70, 100)
+            mic_label.setMaximumSize(240, 100)
             mic_label.setStyleSheet("font-weight: bold;")
             return mic_label
         

@@ -12,6 +12,22 @@ from src.mics import Microphone, mics
 from src.video import Cameras
 from pathlib import Path
 
+data = []
+
+def perform_recording(folder):
+    print(len(mics), "microphones detected")
+    mics2 = [Microphone(*x, folder) for x in mics]
+    cameras = Cameras([0, 2], folder)
+
+    # Make folder if it doesn't exist
+    Path(folder).mkdir(parents=True, exist_ok=True)
+
+    cameras.start()
+    for mic in mics2:
+        mic.start()
+
+    global data
+    data = [cameras] + mics2
 
 
 """
@@ -27,46 +43,38 @@ class RecordView(GenericView):
         self.is_recording = False
         self.record_start = 0
         self.time_since_last_end = 0
-        
-        # Initialize recording
-        # camera_1 = Cameras(0, 30, folder)
 
         # Layout
         layout = QVBoxLayout()
-        max_width = 1920
+
         time_label = QLabel("0:00:00")
-        time_label.setMaximumSize(max_width, 260)
-        # time_label.setStyleSheet("font-size: 120pt;")
+        time_label.setMaximumSize(1200, 120)
         time_label.setObjectName("timeLabel")
         time_label.setAlignment(Qt.AlignCenter)
         layout.addWidget(time_label)
         self.time_label = time_label
 
-        file_label = QLabel("Not recording")
-        file_label.setMaximumSize(max_width, 100)
-        # file_label.setStyleSheet("font-size: 48pt;")
+        file_label = QLabel("Not currently recording")
+        file_label.setMaximumSize(1200, 26)
         file_label.setObjectName("fileLabel")
         file_label.setAlignment(Qt.AlignCenter)
         layout.addWidget(file_label)
         self.file_label = file_label
 
         storage_label = QLabel("Storage used: ")
-        storage_label.setMaximumSize(max_width, 100)
-        # storage_label.setStyleSheet("font-size: 48pt;")
+        storage_label.setMaximumSize(1200, 26)
         storage_label.setObjectName("storageLabel")
         storage_label.setAlignment(Qt.AlignCenter)
         layout.addWidget(storage_label)
         self.storage_label = storage_label
 
         start_record_btn = QPushButton("Start Recording")
-        # start_record_btn.setStyleSheet("font-size: 48pt;")
         start_record_btn.setMinimumSize(240, 160)
         start_record_btn.setObjectName("startBtn")
         start_record_btn.clicked.connect(self.start_recording)
         self.start_record_btn = start_record_btn
 
         stop_record_btn = QPushButton("Stop Recording")
-        # stop_record_btn.setStyleSheet("font-size: 48pt;")
         stop_record_btn.setObjectName("stopBtn")
         stop_record_btn.setMinimumSize(240, 160)
         stop_record_btn.clicked.connect(self.end_recording)
@@ -104,38 +112,13 @@ class RecordView(GenericView):
         self.stop_record_btn.setEnabled(True)
         Thread(target=self.update_thread).start()
 
-        # perform_recording(os.path.join(RECORD_DIR, dt_string))
-        path = os.path.join(RECORD_DIR, dt_string)
-        
-        # Make folder if it doesn't exist
-        Path(path).mkdir(parents=True, exist_ok=True)
-        
-        print(len(mics), "microphones detected")
-        self.mics2 = [Microphone(*x, path) for x in mics]
-        self.video_thread_1 = Cameras(path, 0) ## top left cam
-        self.video_thread_2 = Cameras(path, 2) ## bot right cam
-
-        # cameras.start()
-        self.video_thread_1._record_flag = True
-        self.video_thread_2._record_flag = True
-        self.video_thread_1.start()
-        self.video_thread_2.start()
-        
-        # mic.start()
-        for mic in self.mics2:
-            mic.start()
-        
-        
+        perform_recording(os.path.join(RECORD_DIR, dt_string))
 
     def end_recording(self):
         try:
-            # global data
-            # for d in data:
-            #     d.stop_record()
-            self.video_thread_1.stop_record()
-            self.video_thread_2.stop_record()
-            for mic in self.mics2:
-                mic.stop_record()
+            global data
+            for d in data:
+                d.stop_record()
 
             self.time_since_last_end = time.time()
             self.is_recording = False

@@ -3,8 +3,9 @@ Author: Gavin Song
 Email: songc7@rpi.edu
 """
 
-from PyQt5.QtWidgets import QApplication, QMainWindow
+from PyQt5.QtWidgets import QApplication, QMainWindow, QTabWidget
 from pyqt_vertical_tab_widget.verticalTabWidget import VerticalTabWidget
+import sys
 
 from views.record import RecordView
 from views.info import InfoView
@@ -18,10 +19,12 @@ Controls view switching
 """
 class Controller(object):
     def __init__(self):
-        self.tabs = VerticalTabWidget()
+        # self.tabs = VerticalTabWidget()
+        self.tabs = QTabWidget()
+        
         self.tabs.setAutoFillBackground(True)
         self.current = 0
-
+        
         self.views = [
             RecordView(self),
             LogView(self),
@@ -38,7 +41,7 @@ class Controller(object):
         self.tabs.addTab(self.views[1], "Files    ")
         self.tabs.addTab(self.views[2], "Mic Test ")
         self.tabs.addTab(self.views[3], "Cam Test")
-        self.tabs.addTab(self.views[4], "Info / Update")
+        self.tabs.addTab(self.views[4], "Update")
         self.tabs.addTab(self.views[5], "Config")
 
         self.views[0].on_open()
@@ -69,4 +72,4 @@ if __name__ == "__main__":
     
     # info view, only show fullscreen if not in dev branch
     window.show() if c.views[4].is_dev else window.showFullScreen()
-    app.exec()
+    sys.exit(app.exec_())

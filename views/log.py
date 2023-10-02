@@ -42,33 +42,20 @@ class LogView(GenericView):
         bar.setValue(0)
         layout.addWidget(bar)
         self.bar = bar
-
-        listWidget = QListWidget()
-        listWidget.setSelectionMode(QAbstractItemView.MultiSelection)
-        listWidget.itemClicked.connect(self.update_btn_allow)
-        self.listWidget = listWidget
-        layout.addWidget(listWidget)
-
-        # Warning / success label for copying
-        label = QLabel("")
-        label.setAlignment(Qt.AlignTop)
-        label.setTextFormat(Qt.RichText)
-        self.label = label
-        layout.addWidget(label)
-
+        
         # Copy and delete btns
         btn_layout = QHBoxLayout()
 
         copy_to_sd_btn = QPushButton(COPY_BTN_TEXT)
-        copy_to_sd_btn.setMinimumSize(120, 70)
+        copy_to_sd_btn.setMinimumSize(120, 120)
         copy_to_sd_btn.setObjectName("copyToSDBtn")
         copy_to_sd_btn.clicked.connect(self.copy_to_sd_card_btn)
         copy_to_sd_btn.setDisabled(True)
         self.copy_to_sd_btn = copy_to_sd_btn
         btn_layout.addWidget(copy_to_sd_btn)
 
-        del_btn = QPushButton("Del")
-        del_btn.setMaximumSize(120, 70)
+        del_btn = QPushButton("Delete")
+        del_btn.setMaximumSize(720, 120)
         del_btn.setObjectName("delBtn")
         del_btn.setDisabled(True)
         del_btn.clicked.connect(self.delete_files)
@@ -76,6 +63,21 @@ class LogView(GenericView):
         btn_layout.addWidget(del_btn)
 
         layout.addLayout(btn_layout)
+        
+        # Warning / success label for copying
+        label = QLabel("")
+        label.setAlignment(Qt.AlignTop)
+        label.setTextFormat(Qt.RichText)
+        self.label = label
+        layout.addWidget(label)
+
+        ## list of recorded files
+        listWidget = QListWidget()
+        listWidget.setSelectionMode(QAbstractItemView.MultiSelection)
+        listWidget.itemClicked.connect(self.update_btn_allow)
+        self.listWidget = listWidget
+        layout.addWidget(listWidget)
+        
         self.setLayout(layout)
 
         self.to_copy = []

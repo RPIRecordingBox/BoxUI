@@ -25,28 +25,31 @@ class InfoView(GenericView):
         super().__init__(controller)
 
         layout = QVBoxLayout()
-        label = QLabel(INFO_TEXT)
-        label.setAlignment(Qt.AlignTop)
-        label.setTextFormat(Qt.RichText)
-        self.label = label
-        layout.addWidget(label)
-
+        
         btn_layout = QHBoxLayout()
 
         update_btn = QPushButton("Check for Updates")
-        update_btn.setMinimumSize(120, 70)
+        update_btn.setMinimumSize(120, 120)
         update_btn.setObjectName("updateBtn")
         update_btn.clicked.connect(self.update)
         self.update_btn = update_btn
         btn_layout.addWidget(update_btn)
 
         revert_btn = QPushButton("Revert to previous version")
-        revert_btn.setMinimumSize(120, 70)
+        revert_btn.setMinimumSize(120, 120)
         revert_btn.clicked.connect(self.revert)
         self.revert_btn = revert_btn
         btn_layout.addWidget(revert_btn)
 
         layout.addLayout(btn_layout)
+        
+        label = QLabel(INFO_TEXT)
+        label.setAlignment(Qt.AlignTop)
+        label.setTextFormat(Qt.RichText)
+        self.label = label
+        layout.addWidget(label)
+
+        
 
         self.setLayout(layout)
 

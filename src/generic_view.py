@@ -10,8 +10,8 @@ class GenericView(QWidget):
     """
     def __init__(self, controller):
         super().__init__()
-        self.setGeometry(80, 0, 640, 440)
-        self.setFixedWidth(640)
+        self.setGeometry(0, 0, 1920, 1080)
+        # self.setFixedWidth(1760)
         self.controller = controller
 
     """
